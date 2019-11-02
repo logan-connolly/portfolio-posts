@@ -1,9 +1,9 @@
 # How to generate post
 
-Select which posts you want to generate. For example, to generate the germany election post, you would run from this directory:
+Select which posts you want to generate. For example, to generate the the state of the union post, you would run the script from this directory and pass the post name as an argument:
 
 ```shell
-$ bash run.sh german_election
+$ bash run.sh state_of_union
 ```
 
 The bash script will:
