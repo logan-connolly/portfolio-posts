@@ -18,12 +18,11 @@ RUN install2.r --error \
     hrbrthemes \
     data.table \
     ggplot2 \
-    sf
+    sf \
+    tidytext \
+    tm \
+    wordcloud
 
 # Copy over files
 WORKDIR /render
 COPY . .
-
-# Render html output
-ENTRYPOINT [ "Rscript" ]
-CMD ["-e", "rmarkdown::render('german_election_2017.Rmd')"]
