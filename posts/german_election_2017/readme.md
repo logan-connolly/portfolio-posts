@@ -1,4 +1,4 @@
-German Election 2017 Source
+German Election 2017
 ================
 
 # Import libraries
@@ -196,7 +196,7 @@ party_map %>%
   geom_jitter(colour="lightgrey") +
   geom_boxplot(aes(colour=Party), alpha=0.8) +
   ggtitle("Percentage of Votes among Districts by Party",
-  "Each point ist the % of the district that voted for a particular party") +
+  "Each point is the % of the district that voted for a particular party") +
   xlab("") + ylab("") +
   scale_color_manual(values=party_colors) +
   hrbrthemes::theme_ipsum_rc() +
