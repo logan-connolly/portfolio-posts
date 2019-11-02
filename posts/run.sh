@@ -1,13 +1,16 @@
 #!/bin/sh
 
 # Build image 
-docker build -t $2 $1
+docker build -t render:rmd .
+
+# Change into post directory
+cd $1
 
 # Run container to render html
-docker run -it --rm -v${PWD}:/render $2
+docker run -it --rm -v${PWD}:/render render:rmd
 
-# Copy report to readme so that it renders in github
-cp $1/$1.md $1/readme.md
+# Copy output report to readme so that it renders in github
+cp ${1}.md readme.md
 
 # Remove image
 while getopts "d" OPTION
