@@ -7,10 +7,11 @@ State of the Union
 library(data.table)
 library(ggplot2)
 library(hrbrthemes)
+library(htmltools)
 library(magrittr)
 library(tidytext)
 library(tm)
-library(wordcloud)
+library(wordcloud2)
 
 # Helper addition to theme to match website background
 change_background <- function(plt) {
@@ -136,17 +137,12 @@ change_background(president_plt)
 
 # Negative Sentiment and Wordclouds
 
-## September 11th
-
 ``` r
-# filter for year 2002
-negative_911 <- merge(union_combined[Year == 2002], get_sentiments("bing"))[sentiment == "negative"]
-
-# plot 911 wordcloud
-wordcloud(negative_911$word, negative_911$count, min.freq = 1, colors = "red", random.order=FALSE)
+custom_wordcloud <- function(dt, color, output) {
+  dt <- dt[, .(word, freq=count)]
+  wordcloud2(dt, color = color, fontFamily = "Roboto Condensed", backgroundColor = "#222129")
+}
 ```
-
-![](state_of_union_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
 
 ## Financial Crash
 
@@ -155,7 +151,15 @@ wordcloud(negative_911$word, negative_911$count, min.freq = 1, colors = "red", r
 negative_crash <- merge(union_combined[Year == 2009], get_sentiments("bing"))[sentiment == "negative"]
 
 # plot crash wordcloud
-wordcloud(negative_crash$word, negative_crash$count, min.freq = 1, colors = "red", random.order=FALSE)
+custom_wordcloud(negative_crash, color="#dd5a5a", output="wordcloud1.html")
 ```
 
-![](state_of_union_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
+## September 11th
+
+``` r
+# filter for year 2002
+negative_911 <- merge(union_combined[Year == 2002], get_sentiments("bing"))[sentiment == "negative"]
+
+# plot 911 wordcloud
+custom_wordcloud(negative_911, color = "#dd5a5a", output="wordcloud2.html")
+```
