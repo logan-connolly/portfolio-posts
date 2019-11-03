@@ -1,9 +1,15 @@
-State of the Union
-================
+---
+title: "State of the Union"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+```
 
 # Import libraries
 
-``` r
+```{r}
 library(data.table)
 library(ggplot2)
 library(hrbrthemes)
@@ -26,7 +32,7 @@ change_background <- function(plt) {
 
 # Import and Prep Data
 
-``` r
+```{r}
 # Read in data
 union <- data.table::fread("data/StateOfUnion.csv", sep="|")
 
@@ -40,15 +46,9 @@ union[, President := factor(President, levels=president_order)]
 str(union, give.attr=FALSE)
 ```
 
-    ## Classes 'data.table' and 'data.frame':   37 obs. of  4 variables:
-    ##  $ President: Factor w/ 6 levels "Ronald Reagan",..: 6 5 5 5 5 5 5 5 5 4 ...
-    ##  $ Year     : int  2017 2016 2015 2014 2013 2012 2011 2010 2009 2008 ...
-    ##  $ Party    : chr  "Republican" "Democrat" "Democrat" "Democrat" ...
-    ##  $ Address  : chr  "Thank you very much. Mr. Speaker, Mr. Vice President, Members of Congress, the First Lady of the United States,"| __truncated__ "Mr. Speaker, Mr. Vice President, Members of Congress, my fellow Americans: Tonight marks the eighth year that I"| __truncated__ "Mr. Speaker, Mr. Vice President, Members of Congress, my fellow Americans: We are 15 years into this new centur"| __truncated__ "Mr. Speaker, Mr. Vice President, Members of Congress, my fellow Americans: Today in America, a teacher spent ex"| __truncated__ ...
-
 # Create Corpus
 
-``` r
+```{r}
 # Read in Address column as corpus
 corpus <- tm::Corpus(tm::VectorSource(union$Address))
 
@@ -69,7 +69,7 @@ union_sparse <- as.data.table(as.matrix(sparse))
 
 # Tidy Data
 
-``` r
+```{r}
 # Go from sparse data frame to narrow and filter out zero values
 union_combined <- union[, !"Address"] %>%
   cbind(union_sparse) %>%
@@ -79,7 +79,7 @@ union_combined <- union[, !"Address"] %>%
 
 # Average Word Count per Address
 
-``` r
+```{r, fig.width=10, fig.height=8}
 # Calculate total words for each address
 address_length <- union_combined[, .(Total = sum(count)), by = .(President, Year)]
 
@@ -104,11 +104,10 @@ address_plt <- address_length %>%
 change_background(address_plt)
 ```
 
-![](state_of_union_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
-
 # Top Words by Presidency
 
-``` r
+
+```{r, fig.width=10, fig.height=8}
 # Calculate tf_idf
 union_tf_idf <- union_combined %>% 
   bind_tf_idf(word, Year, count)
@@ -132,13 +131,11 @@ president_plt <- president_tf_idf %>%
 change_background(president_plt)
 ```
 
-![](state_of_union_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
-
 # Negative Sentiment and Wordclouds
 
 ## September 11th
 
-``` r
+```{r, fig.width=10, fig.height=8}
 # filter for year 2002
 negative_911 <- merge(union_combined[Year == 2002], get_sentiments("bing"))[sentiment == "negative"]
 
@@ -146,16 +143,12 @@ negative_911 <- merge(union_combined[Year == 2002], get_sentiments("bing"))[sent
 wordcloud(negative_911$word, negative_911$count, min.freq = 1, colors = "red", random.order=FALSE)
 ```
 
-![](state_of_union_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
-
 ## Financial Crash
 
-``` r
+```{r, fig.width=10, fig.height=8}
 # filter for year 2009
 negative_crash <- merge(union_combined[Year == 2009], get_sentiments("bing"))[sentiment == "negative"]
 
 # plot crash wordcloud
 wordcloud(negative_crash$word, negative_crash$count, min.freq = 1, colors = "red", random.order=FALSE)
 ```
-
-![](state_of_union_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
