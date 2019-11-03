@@ -21,7 +21,7 @@ RUN install2.r --error \
     sf \
     tidytext \
     tm \
-    wordcloud
+    wordcloud2
 
 # Copy over files
 WORKDIR /render
