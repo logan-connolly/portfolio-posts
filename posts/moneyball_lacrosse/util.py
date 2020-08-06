@@ -1,5 +1,4 @@
-import plotly.express as px
-import plotly.graph_objs as go
+import statsmodels.api as sm
 
 
 def calculate_win_predictor(df):
@@ -7,28 +6,20 @@ def calculate_win_predictor(df):
     return [0 if n < 0 else round(n, 1) for n in wp]
 
 
+def calculate_pythagorean_expectation(df, exp=2):
+    return 1 / 1 + (df["Goals"] / df["Goals Allowed"])**exp
+
+
 def split_data(df, year=2019):
     mask = df.Year >= year
     return df[~mask], df[mask]
 
 
-def plot_wins(df):
-    plt = px.scatter(
-        df,
-        x="Win_Predictor",
-        y="Won",
-        color="Playoffs",
-        hover_name="Team",
-        hover_data=["Lost", "Year"],
-        title="Actual Wins vs. Projected Wins [2011-2018]",
-        labels={
-            "Win_Predictor": "Projected Wins",
-            "Won": "Actual Wins",
-            "Made_Playoffs": "Playoffs"
-        },
-        template="plotly_dark"
-    )
-    return plt.add_traces(
-        go.Scatter(x=X, y=model.fittedvalues, mode="lines", name="OLS")
-    )
+def fit_model(X, y):
+    X = sm.add_constant(X)
+    return sm.OLS(y, X).fit()
 
+
+def make_predictions(model, X):
+    X = sm.add_constant(X)
+    return model.predict(X)

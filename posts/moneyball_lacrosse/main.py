@@ -1,11 +1,10 @@
 from pathlib import Path
 
 import pandas as pd
-import plotly.io as pio
-import statsmodels.api as sm
 
-from util import calculate_win_predictor, plot_wins, split_data
+from plot import generate_model_plots
 from scrape import Stats
+from util import calculate_pythagorean_expectation, split_data
 
 
 def main():
@@ -14,17 +13,11 @@ def main():
         df.to_csv(fname, index=False)
 
     df = pd.read_csv("data/teams.csv")
-    df["Win_Predictor"] = calculate_win_predictor(df)
+    df.loc[:, "WinPct"] = round(df.Won / df.Games, 4)
+    df.loc[:, "ExpectPct"] = calculate_pythagorean_expectation(df, exp=1.23)
+    df.loc[:, "WinPredictor"] = df["Games"] * df["ExpectPct"]
     train, test = split_data(df)
-
-    X, y = train.Win_Predictor, train.Won
-    model = sm.OLS(y, X).fit()
-    preds = model.predict(test.Win_Predictor)
-
-    fig1 = plot_wins(train)
-    pio.write_html(fig1, file="plots/plot_1.html")
-
-    print(pd.DataFrame(dict(team=test.Team, won=test.Won, pred=preds)))
+    generate_model_plots(train, test)
 
 
 if __name__ == "__main__":
