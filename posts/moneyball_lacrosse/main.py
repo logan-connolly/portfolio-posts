@@ -14,8 +14,8 @@ def main():
 
     df = pd.read_csv("data/teams.csv")
     df.loc[:, "WinPct"] = round(df.Won / df.Games, 4)
-    df.loc[:, "ExpectPct"] = calculate_pythagorean_expectation(df, exp=1.23)
-    df.loc[:, "WinPredictor"] = df["Games"] * df["ExpectPct"]
+    df.loc[:, "ExpectWinPct"] = calculate_pythagorean_expectation(df, exp=1.23)
+    df.loc[:, "ExpectWon"] = df["Games"] * df["ExpectWinPct"]
     train, test = split_data(df)
     generate_model_plots(train, test)
 

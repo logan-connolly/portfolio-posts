@@ -29,11 +29,11 @@ def generate_model_plot(df, x, y, preds, out_file=None, title=None):
 
 
 def generate_model_plots(train, test):
-    # Train WinPredictor model
-    model = fit_model(train.WinPredictor, train.Won)
+    # Train ExpectWon model
+    model = fit_model(train.ExpectWon, train.Won)
     generate_model_plot(
         train,
-        "WinPredictor",
+        "ExpectWon",
         "Won",
         model.fittedvalues,
         out_file="plots/model_plot_train.json",
@@ -42,10 +42,10 @@ def generate_model_plots(train, test):
     logger.info(f"\n{model.summary()}")
 
     # Calculate and visualize predictions
-    preds = make_predictions(model, test.WinPredictor)
+    preds = make_predictions(model, test.ExpectWon)
     generate_model_plot(
         test,
-        "WinPredictor",
+        "ExpectWon",
         "Won",
         preds,
         out_file="plots/model_plot_test.json",
